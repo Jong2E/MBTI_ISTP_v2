@@ -1,7 +1,7 @@
 /* ===== 제미나이 API 연동 및 ISTP 전문 응답 시스템 ===== */
 
 // 키워드 매핑
-const KEYWORD_MAPPING = {
+const KEYWORD_MAPPING = window.KEYWORD_MAPPING || {
   basic: ['istp', '특징', '성격', '어떤', '설명'],
   cognitive: ['인지기능', 'ti', 'se', 'ni', 'fe', '기능'],
   career: ['직업', '일', '업무', '진로', '취업', '커리어'],
