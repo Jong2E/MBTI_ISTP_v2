@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ISTP 채팅</title>
+    <meta name="description" content="ISTP 전문 AI 챗봇과의 간단한 채팅">
+    
+    <!-- 폰트 -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        .chat-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: white;
+        }
+
+        /* 헤더 */
+        .chat-header {
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .chat-header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .chat-header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* 메인 채팅 영역 */
+        .chat-main {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* 캐릭터 이미지 영역 */
+        .character-section {
+            width: 400px;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-right: 1px solid #e9ecef;
+            position: relative;
+        }
+
+        .character-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        .character-overlay {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .character-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 4px;
+        }
+
+        .character-type {
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+
+        /* 채팅 메시지 영역 */
+        .messages-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%);
+        }
+
+        /* 메시지 스타일 */
+        .message {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            animation: messageSlideIn 0.5s ease;
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+            text-align: right;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .message.user .message-avatar {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+        }
+
+        .message-content {
+            max-width: 70%;
+            background: white;
+            padding: 16px 20px;
+            border-radius: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: relative;
+            line-height: 1.6;
+            color: #2c3e50;
+        }
+
+        .message.user .message-content {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .message-time {
+            font-size: 12px;
+            color: #95a5a6;
+            margin-top: 8px;
+        }
+
+        /* 타이핑 인디케이터 */
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .typing-dots {
+            background: white;
+            padding: 16px 20px;
+            border-radius: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #95a5a6;
+            animation: typingPulse 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        /* 입력 영역 */
+        .input-section {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+        }
+
+        .message-input {
+            flex: 1;
+            min-height: 50px;
+            max-height: 120px;
+            padding: 12px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            font-size: 16px;
+            font-family: inherit;
+            resize: none;
+            outline: none;
+            transition: border-color 0.3s ease;
+            line-height: 1.4;
+        }
+
+        .message-input:focus {
+            border-color: #667eea;
+        }
+
+        .send-button {
+            width: 50px;
+            height: 50px;
+            border: none;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .send-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .send-button:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* 로딩 상태 */
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 20px;
+            z-index: 100;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .loading-text {
+            font-size: 18px;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        .loading-timer {
+            font-size: 24px;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        /* 반응형 디자인 */
+        @media (max-width: 768px) {
+            .character-section {
+                width: 300px;
+            }
+            
+            .character-overlay {
+                bottom: 10px;
+                left: 10px;
+                right: 10px;
+                padding: 12px;
+            }
+            
+            .message-content {
+                max-width: 85%;
+            }
+            
+            .input-section {
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .chat-main {
+                flex-direction: column;
+            }
+            
+            .character-section {
+                width: 100%;
+                height: 200px;
+                border-right: none;
+                border-bottom: 1px solid #e9ecef;
+            }
+            
+            .character-overlay {
+                position: static;
+                background: rgba(255, 255, 255, 0.95);
+                margin: 10px;
+            }
+        }
+
+        /* 애니메이션 */
+        @keyframes messageSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes typingPulse {
+            0%, 60%, 100% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+            30% {
+                transform: scale(1.2);
+                opacity: 1;
+            }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* 스크롤바 스타일 */
+        .messages-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .messages-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .messages-container::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+
+        .messages-container::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <!-- 헤더 -->
+        <div class="chat-header">
+            <h1>🔧 ISTP 챗봇</h1>
+            <p>논리적 실용주의자와의 대화</p>
+        </div>
+
+        <!-- 메인 채팅 영역 -->
+        <div class="chat-main">
+            <!-- 캐릭터 이미지 영역 -->
+            <div class="character-section">
+                <img id="characterImage" class="character-image" src="" alt="ISTP 캐릭터">
+                <div class="character-overlay">
+                    <div class="character-name">ISTP 전문가</div>
+                    <div class="character-type" id="characterType">논리적 실용주의자</div>
+                </div>
+            </div>
+
+            <!-- 채팅 메시지 영역 -->
+            <div class="messages-section">
+                <div class="messages-container" id="messagesContainer">
+                    <!-- 환영 메시지 -->
+                    <div class="message bot">
+                        <div class="message-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="message-content">
+                            <div id="welcomeMessage">안녕하세요! 👋 저는 ISTP 전문 챗봇입니다.<br>논리적 실용주의자에 대해 궁금한 것이 있으시면 언제든 물어보세요!</div>
+                            <div class="message-time" id="welcomeTime"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 입력 영역 -->
+                <div class="input-section">
+                    <div class="input-container">
+                        <textarea 
+                            id="messageInput" 
+                            class="message-input" 
+                            placeholder="ISTP에 대해 궁금한 것을 물어보세요..."
+                            rows="1"
+                        ></textarea>
+                        <button id="sendButton" class="send-button">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 로딩 오버레이 -->
+        <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">답변을 준비하고 있어요...</div>
+            <div class="loading-timer" id="loadingTimer">12</div>
+        </div>
+    </div>
+
+    <script>
+        // 간단한 유틸리티 함수들
+        const Utils = {
+            log: (...args) => console.log('[ISTP Chat]', ...args),
+            error: (...args) => console.error('[ISTP Chat Error]', ...args)
+        };
+
+        // 기본 설정
+        const CONFIG = {
+            UI: {
+                TYPING_DELAY: 50
+            }
+        };
+    </script>
+    
+    <script>
+        class SimpleChatbot {
+            constructor() {
+                this.isProcessing = false;
+                this.messages = [];
+                this.userGender = null;
+                
+                this.initElements();
+                this.loadUserSettings();
+                this.bindEvents();
+                this.setupCharacter();
+            }
+
+            initElements() {
+                this.messagesContainer = document.getElementById('messagesContainer');
+                this.messageInput = document.getElementById('messageInput');
+                this.sendButton = document.getElementById('sendButton');
+                this.loadingOverlay = document.getElementById('loadingOverlay');
+                this.loadingTimer = document.getElementById('loadingTimer');
+                this.characterImage = document.getElementById('characterImage');
+                this.characterType = document.getElementById('characterType');
+                this.welcomeMessage = document.getElementById('welcomeMessage');
+                this.welcomeTime = document.getElementById('welcomeTime');
+            }
+
+            loadUserSettings() {
+                this.userGender = localStorage.getItem('istp_chatbot_gender') || 'other';
+            }
+
+            bindEvents() {
+                this.sendButton.addEventListener('click', () => this.sendMessage());
+                this.messageInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        this.sendMessage();
+                    }
+                });
+                this.messageInput.addEventListener('input', () => this.autoResize());
+            }
+
+            setupCharacter() {
+                // 성별별 캐릭터 이미지 및 텍스트 설정
+                if (this.userGender === 'male') {
+                    this.characterImage.src = 'https://page.gensparksite.com/v1/base64_upload/836f582fb786c21a95a883266f0d56b6';
+                    this.characterType.textContent = '남성 ISTP 전문가';
+                    this.welcomeMessage.innerHTML = '안녕하세요! 👋 저는 남성 ISTP 전문 챗봇입니다.<br>논리적 실용주의자 형님의 특성에 대해 궁금한 것이 있으시면 언제든 물어보세요!';
+                } else if (this.userGender === 'female') {
+                    this.characterImage.src = 'https://page.gensparksite.com/v1/base64_upload/ca3a4555ca40a6658cf93707aa767438';
+                    this.characterType.textContent = '여성 ISTP 전문가';
+                    this.welcomeMessage.innerHTML = '안녕하세요! 👋 저는 여성 ISTP 전문 챗봇입니다.<br>논리적 실용주의자 언니의 특성에 대해 궁금한 것이 있으시면 언제든 물어보세요!';
+                } else {
+                    // 기본 이미지 (성별 무관)
+                    this.characterImage.src = 'https://page.gensparksite.com/v1/base64_upload/836f582fb786c21a95a883266f0d56b6';
+                    this.characterType.textContent = 'ISTP 전문가';
+                    this.welcomeMessage.innerHTML = '안녕하세요! 👋 저는 ISTP 전문 챗봇입니다.<br>논리적 실용주의자에 대해 궁금한 것이 있으시면 언제든 물어보세요!';
+                }
+                
+                this.welcomeTime.textContent = new Date().toLocaleTimeString('ko-KR', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            }
+
+            autoResize() {
+                const textarea = this.messageInput;
+                textarea.style.height = 'auto';
+                textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+            }
+
+            async sendMessage() {
+                const text = this.messageInput.value.trim();
+                if (!text || this.isProcessing) return;
+
+                // 사용자 메시지 추가
+                this.addMessage(text, 'user');
+                this.messageInput.value = '';
+                this.autoResize();
+
+                // 12초 딜레이와 함께 응답 생성
+                await this.processMessageWithDelay(text);
+            }
+
+            addMessage(text, sender) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${sender}`;
+
+                const avatar = document.createElement('div');
+                avatar.className = 'message-avatar';
+                avatar.innerHTML = sender === 'user' ? '<i class="fas fa-user"></i>' : '<i class="fas fa-robot"></i>';
+
+                const content = document.createElement('div');
+                content.className = 'message-content';
+                content.innerHTML = `
+                    <div>${this.formatMessage(text)}</div>
+                    <div class="message-time">${new Date().toLocaleTimeString('ko-KR', {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    })}</div>
+                `;
+
+                messageDiv.appendChild(avatar);
+                messageDiv.appendChild(content);
+                this.messagesContainer.appendChild(messageDiv);
+                
+                this.scrollToBottom();
+            }
+
+            async processMessageWithDelay(userMessage) {
+                this.isProcessing = true;
+                this.sendButton.disabled = true;
+
+                // 타이핑 인디케이터 표시
+                this.showTypingIndicator();
+
+                // 로딩 오버레이 표시 및 12초 타이머
+                this.showLoadingWithTimer();
+
+                try {
+                    // 12초 대기
+                    await this.delay(12000);
+
+                    // 응답 생성
+                    const response = await this.generateResponse(userMessage);
+                    
+                    // 타이핑 인디케이터 제거
+                    this.hideTypingIndicator();
+                    
+                    // 응답 메시지 추가
+                    this.addMessage(response, 'bot');
+                    
+                } catch (error) {
+                    console.error('응답 생성 실패:', error);
+                    this.hideTypingIndicator();
+                    this.addMessage('죄송합니다. 일시적인 오류가 발생했습니다. 다시 시도해주세요.', 'bot');
+                } finally {
+                    this.hideLoading();
+                    this.isProcessing = false;
+                    this.sendButton.disabled = false;
+                }
+            }
+
+            showTypingIndicator() {
+                const typingDiv = document.createElement('div');
+                typingDiv.className = 'typing-indicator';
+                typingDiv.id = 'typingIndicator';
+                typingDiv.innerHTML = `
+                    <div class="message-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="typing-dots">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                `;
+                this.messagesContainer.appendChild(typingDiv);
+                this.scrollToBottom();
+            }
+
+            hideTypingIndicator() {
+                const typingIndicator = document.getElementById('typingIndicator');
+                if (typingIndicator) {
+                    typingIndicator.remove();
+                }
+            }
+
+            showLoadingWithTimer() {
+                this.loadingOverlay.style.display = 'flex';
+                let timeLeft = 12;
+                this.loadingTimer.textContent = timeLeft;
+
+                const timer = setInterval(() => {
+                    timeLeft--;
+                    this.loadingTimer.textContent = timeLeft;
+                    
+                    if (timeLeft <= 0) {
+                        clearInterval(timer);
+                    }
+                }, 1000);
+            }
+
+            hideLoading() {
+                this.loadingOverlay.style.display = 'none';
+            }
+
+            async delay(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+
+            async generateResponse(userMessage) {
+                // GeminiAPI 또는 모의 응답 사용
+                if (window.GeminiAPI) {
+                    const result = await window.GeminiAPI.generateResponse(userMessage);
+                    return result.response;
+                } else {
+                    // 간단한 모의 응답
+                    return this.getSimpleMockResponse(userMessage);
+                }
+            }
+
+            getSimpleMockResponse(userMessage) {
+                const message = userMessage.toLowerCase();
+                
+                if (message.includes('특징') || message.includes('성격')) {
+                    return `🔧 **ISTP의 주요 특징**\n\nISTP는 논리적이고 실용적인 접근을 선호하는 성격입니다.\n\n• **분석적 사고**: 문제의 본질을 파악하고 논리적으로 해결\n• **실용성 중시**: 이론보다는 실제 적용 가능한 것을 선호\n• **독립성**: 자신만의 방식으로 일하는 것을 좋아함\n• **손재주**: 기계나 도구를 다루는 능력이 뛰어남`;
+                }
+                
+                if (message.includes('직업') || message.includes('일')) {
+                    return `💼 **ISTP에게 어울리는 직업**\n\n• 기계 엔지니어, 전기 기술자\n• 소프트웨어 개발자, 시스템 관리자\n• 자동차 정비사, 항공기 정비사\n• 외과의사, 응급의학과 의사\n• 건축가, 조각가\n\nISTP는 실무 중심이고 독립적으로 일할 수 있는 환경에서 최고의 성과를 발휘합니다!`;
+                }
+                
+                if (message.includes('연애') || message.includes('사랑')) {
+                    return `💕 **ISTP의 연애 스타일**\n\n• **행동으로 표현**: 말보다는 실질적인 도움으로 사랑을 보여줌\n• **독립성 존중**: 상대방의 개인 공간과 자유를 중요하게 생각\n• **실용적 배려**: 상대방의 문제를 해결해주려고 노력\n• **솔직한 소통**: 돌려말하기보다 직접적이고 명확한 표현을 선호`;
+                }
+                
+                return `🤔 흥미로운 질문이네요!\n\nISTP에 대해 더 구체적으로 어떤 부분이 궁금하신가요? 성격 특징, 적합한 직업, 연애 스타일, 성장 방향 등 무엇이든 물어보세요!\n\n논리적 실용주의자 ISTP의 세계를 함께 탐구해봐요! ✨`;
+            }
+
+            formatMessage(text) {
+                return text
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\n/g, '<br>');
+            }
+
+            scrollToBottom() {
+                setTimeout(() => {
+                    this.messagesContainer.scrollTop = this.messagesContainer.scrollHeight;
+                }, 100);
+            }
+        }
+
+        // 페이지 로드 시 챗봇 초기화
+        document.addEventListener('DOMContentLoaded', () => {
+            new SimpleChatbot();
+        });
+
+        // 설정이 없으면 성별 선택 페이지로 이동
+        if (!localStorage.getItem('istp_chatbot_setup_completed')) {
+            setTimeout(() => {
+                window.location.href = 'gender-selection.html';
+            }, 1000);
+        }
+    </script>
+</body>
+</html>

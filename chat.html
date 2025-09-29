@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ISTP 상담 - 무엇이든 질문하세요</title>
+<parameter name="description" content="ISTP에 대한 궁금한 점을 자유롭게 질문해보세요">
+    
+    <!-- 폰트 및 아이콘 -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=Nanum+Pen+Script&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            /* 따뜻한 베이지 컬러 팔레트 */
+            --primary-warm: #D4A574;
+            --secondary-warm: #E6C2A6;
+            --accent-gold: #DAA520;
+            --accent-bronze: #CD7F32;
+            --text-dark: #5D4037;
+            --text-medium: #8D6E63;
+            --text-light: #BCAAA4;
+            --paper-bg: #FFFbF7;
+            --paper-shadow: 0 8px 32px rgba(139, 69, 19, 0.15);
+            --bg-gradient-start: #FFF8E1;
+            --bg-gradient-end: #F3E5AB;
+            --card-bg: rgba(255, 248, 225, 0.95);
+            --shadow-light: 0 4px 12px rgba(139, 69, 19, 0.15);
+            --shadow-heavy: 0 8px 24px rgba(139, 69, 19, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            min-height: 100vh;
+            color: var(--text-dark);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* 배경 마법 효과 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(circle at 20% 80%, rgba(255, 224, 130, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 183, 77, 0.2) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .main-container {
+            max-width: 600px;
+            margin: 0 auto;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 헤더 */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 248, 225, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 20px;
+            box-shadow: 0 2px 10px rgba(139, 69, 19, 0.1);
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 600px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .back-button {
+            background: var(--secondary-warm);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-dark);
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            background: var(--primary-warm);
+            transform: scale(1.1);
+        }
+
+        .header-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-dark);
+            flex: 1;
+        }
+
+        /* 메인 컨텐츠 */
+        .content-wrapper {
+            margin-top: 80px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+        }
+
+        /* 소원 편지지 */
+        .wish-paper {
+            background: var(--paper-bg);
+            border-radius: 20px;
+            box-shadow: var(--paper-shadow);
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            position: relative;
+            border: 2px solid var(--secondary-warm);
+            transition: all 0.3s ease;
+        }
+
+        .wish-paper::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            background: linear-gradient(45deg, var(--accent-gold), var(--primary-warm));
+            border-radius: 25px;
+            z-index: -1;
+            opacity: 0.3;
+        }
+
+        .paper-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .paper-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .magic-icon {
+            color: var(--accent-gold);
+            animation: sparkle 2s infinite;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.2) rotate(180deg); }
+        }
+
+        .paper-subtitle {
+            font-size: 16px;
+            color: var(--text-medium);
+            font-style: italic;
+        }
+
+        /* 질문 입력 영역 */
+        .question-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-label {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .question-textarea {
+            width: 100%;
+            min-height: 200px;
+            max-height: 300px;
+            padding: 20px;
+            border: 2px solid var(--secondary-warm);
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.8);
+            font-family: 'Nanum Pen Script', cursive;
+            font-size: 18px;
+            color: var(--text-dark);
+            resize: vertical;
+            outline: none;
+            transition: all 0.3s ease;
+            line-height: 1.6;
+        }
+
+        .question-textarea:focus {
+            border-color: var(--accent-gold);
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 0 20px rgba(218, 165, 32, 0.3);
+        }
+
+        .question-textarea::placeholder {
+            color: var(--text-light);
+            font-style: italic;
+        }
+
+        /* 소원 보내기 버튼 */
+        .send-wish-button {
+            background: linear-gradient(135deg, var(--accent-gold), var(--primary-warm));
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .send-wish-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.5s;
+        }
+
+        .send-wish-button:hover::before {
+            left: 100%;
+        }
+
+        .send-wish-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(218, 165, 32, 0.4);
+        }
+
+        .send-wish-button:disabled {
+            background: var(--text-light);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* 로딩 상태 */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 248, 225, 0.95);
+            backdrop-filter: blur(10px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .loading-content {
+            text-align: center;
+            padding: 40px;
+            background: var(--paper-bg);
+            border-radius: 20px;
+            box-shadow: var(--paper-shadow);
+            border: 2px solid var(--secondary-warm);
+            max-width: 400px;
+            margin: 0 20px;
+        }
+
+        .loading-icon {
+            font-size: 60px;
+            color: var(--accent-gold);
+            margin-bottom: 20px;
+            animation: magicSpin 2s infinite;
+        }
+
+        @keyframes magicSpin {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.2); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        .loading-text {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+        }
+
+        .loading-subtext {
+            font-size: 14px;
+            color: var(--text-medium);
+            font-style: italic;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--secondary-warm);
+            border-radius: 3px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-gold), var(--primary-warm));
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* 답변 영역 */
+        .answer-section {
+            display: none;
+            width: 100%;
+            max-width: 500px;
+            animation: slideUp 0.8s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .answer-paper {
+            background: linear-gradient(135deg, var(--paper-bg) 0%, #FFF 100%);
+            border-radius: 20px;
+            box-shadow: var(--paper-shadow);
+            padding: 40px;
+            position: relative;
+            border: 2px solid var(--accent-gold);
+        }
+
+        .answer-paper::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            background: linear-gradient(45deg, var(--accent-gold), var(--wish-purple));
+            border-radius: 25px;
+            z-index: -1;
+            opacity: 0.5;
+        }
+
+        .answer-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .answer-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .answer-content {
+            font-size: 16px;
+            line-height: 1.8;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+        }
+
+        /* 답변 내용 구조화 스타일 */
+        .answer-content p {
+            margin-bottom: 16px;
+            padding: 0;
+        }
+
+        .answer-content strong {
+            color: var(--accent-bronze);
+            font-weight: 600;
+        }
+
+        .answer-content em {
+            color: var(--text-medium);
+            font-style: italic;
+        }
+
+        /* 리스트 항목 스타일링 */
+        .answer-content .point-list {
+            background: rgba(255, 248, 225, 0.7);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 16px 0;
+            border: 1px solid var(--secondary-warm);
+            box-shadow: 0 2px 8px rgba(139, 69, 19, 0.1);
+        }
+
+        .answer-content .point-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 12px;
+            padding: 8px 0;
+        }
+
+        .answer-content .point-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .answer-content .point-icon {
+            color: var(--accent-gold);
+            font-size: 14px;
+            margin-top: 3px;
+            flex-shrink: 0;
+        }
+
+        .answer-content .point-text {
+            flex: 1;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        /* 섹션 제목 스타일 */
+        .answer-content .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin: 24px 0 16px 0;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--secondary-warm);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .answer-content .section-title .section-icon {
+            color: var(--accent-gold);
+            font-size: 16px;
+        }
+
+        /* 하이라이트 박스 */
+        .answer-content .highlight-box {
+            background: linear-gradient(135deg, rgba(218, 165, 32, 0.1), rgba(212, 165, 116, 0.1));
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin: 16px 0;
+            font-weight: 500;
+        }
+
+        /* 인사말 및 마무리 */
+        .answer-content .greeting,
+        .answer-content .closing {
+            text-align: center;
+            font-style: italic;
+            color: var(--text-medium);
+            margin: 20px 0;
+        }
+
+        .answer-content .greeting {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 24px;
+        }
+
+        .answer-content .closing {
+            margin-top: 24px;
+            padding: 16px;
+            background: rgba(255, 248, 225, 0.5);
+            border-radius: 8px;
+        }
+
+        .answer-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .action-button {
+            background: var(--secondary-warm);
+            color: var(--text-dark);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .action-button:hover {
+            background: var(--primary-warm);
+            transform: translateY(-2px);
+        }
+
+        /* 반응형 디자인 */
+        @media (max-width: 480px) {
+            .main-container {
+                padding: 15px;
+            }
+
+            .wish-paper,
+            .answer-paper {
+                padding: 25px;
+            }
+
+            .paper-title {
+                font-size: 24px;
+            }
+
+            .question-textarea {
+                min-height: 160px;
+                max-height: 250px;
+                padding: 15px;
+                font-size: 16px;
+            }
+
+            .send-wish-button {
+                padding: 15px 30px;
+                font-size: 16px;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <!-- 헤더 -->
+    <div class="header">
+        <div class="header-content">
+            <button class="back-button" onclick="goBack()">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <div class="header-title">ISTP에게 질문하기</div>
+        </div>
+    </div>
+
+    <!-- 메인 컨텐츠 -->
+    <div class="main-container">
+        <div class="content-wrapper">
+            <!-- 소원 편지지 -->
+            <div class="wish-paper" id="wishPaper">
+                <div class="paper-header">
+                    <h1 class="paper-title">
+                        <i class="fas fa-star magic-icon"></i>
+                        ISTP에 대해<br>무엇이든 물어봐!
+                        <i class="fas fa-star magic-icon"></i>
+                    </h1>
+                    <p class="paper-subtitle">ISTP에게 궁금한 점이 있으신가요?<br>평소에 ISTP에 대해 알고 싶었던 점을 질문해주세요.</p>
+                </div>
+
+                <form class="question-form" onsubmit="sendWish(event)">
+                    <label class="form-label">
+                        <i class="fas fa-feather-alt"></i>
+                        무엇이 궁금하신가요?
+                    </label>
+                    <textarea 
+                        class="question-textarea" 
+                        id="questionInput"
+                        placeholder="ISTP에 대해 궁금한 것을 자유롭게 적어보세요...&#10;&#10;예시:&#10;• ISTP의 연애 스타일은 어떤가요?&#10;• ISTP에게 맞는 직업은 무엇인가요?&#10;• ISTP의 장단점을 알고 싶어요&#10;• ISTP와 잘 맞는 성격 유형은?"
+                        required
+                        maxlength="500"
+                    ></textarea>
+                    
+                    <button type="submit" class="send-wish-button" id="sendButton">
+                        <i class="fas fa-paper-plane"></i>
+                        질문하기
+                    </button>
+                </form>
+            </div>
+
+            <!-- 답변 영역 -->
+            <div class="answer-section" id="answerSection">
+                <div class="answer-paper">
+                    <div class="answer-header">
+                        <h2 class="answer-title">
+                            <i class="fas fa-envelope-open-text"></i>
+                            당신을 위한 답변이 도착했습니다
+                        </h2>
+                    </div>
+                    <div class="answer-content" id="answerContent">
+                        <!-- 답변이 여기에 표시됩니다 -->
+                    </div>
+                    <div class="answer-actions">
+                        <button class="action-button" onclick="newWish()">
+                            <i class="fas fa-plus"></i>
+                            새로운 질문
+                        </button>
+                        <button class="action-button" onclick="goBack()">
+                            <i class="fas fa-home"></i>
+                            처음으로
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 로딩 오버레이 -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="loading-icon">
+                <i class="fas fa-magic"></i>
+            </div>
+            <div class="loading-text">마법이 답을 찾고 있어요...</div>
+            <div class="loading-subtext">잠시만 기다려주세요 ✨</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript - defer로 순서 보장 -->
+    <script src="js/config.js" defer></script>
+    <script src="js/istp-knowledge-base.js" defer></script>
+    <script src="js/personalization.js" defer></script>
+    <script src="js/gemini-api.js" defer></script>
+    <script>
+        class ISTPWishService {
+            constructor() {
+                this.chatbotGender = localStorage.getItem('userGender') || 'male';
+                this.loadingMessages = [
+                    "ISTP의 비밀을 찾고 있어요...",
+                    "논리적인 답변을 준비하고 있어요...",
+                    "실용적인 조언을 만들어내고 있어요...",
+                    "당신만을 위한 맞춤 답변을 작성 중...",
+                    "마법의 지식창고를 뒤적이고 있어요..."
+                ];
+                
+                this.init();
+            }
+
+            init() {
+                this.checkGenderSelection();
+                this.setupTextareaAutoResize();
+            }
+
+            checkGenderSelection() {
+                if (!this.chatbotGender) {
+                    window.location.href = 'gender-selection.html';
+                    return;
+                }
+            }
+
+            setupTextareaAutoResize() {
+                const textarea = document.getElementById('questionInput');
+                textarea.addEventListener('input', () => {
+                    textarea.style.height = 'auto';
+                    textarea.style.height = Math.min(textarea.scrollHeight, 350) + 'px';
+                });
+            }
+
+            async sendWish(event) {
+                event.preventDefault();
+                
+                const questionInput = document.getElementById('questionInput');
+                const question = questionInput.value.trim();
+                
+                if (!question) {
+                    alert('질문을 적어주세요! 😊');
+                    return;
+                }
+
+                // UI 상태 변경
+                this.showLoading();
+                
+                try {
+                    // 12초 로딩 애니메이션
+                    await this.simulateLoading();
+                    
+                    // getGeminiResponse 함수가 로드될 때까지 대기
+                    while (typeof getGeminiResponse === 'undefined') {
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                    }
+                    
+                    // API 호출
+                    const answer = await getGeminiResponse(question, this.chatbotGender);
+                    
+                    // 답변 표시
+                    this.showAnswer(question, answer);
+                    
+                } catch (error) {
+                    console.error('Error:', error);
+                    this.showAnswer(question, this.getFallbackAnswer(question));
+                } finally {
+                    this.hideLoading();
+                }
+            }
+
+            showLoading() {
+                const overlay = document.getElementById('loadingOverlay');
+                overlay.style.display = 'flex';
+                
+                // 프로그레스 바 애니메이션
+                this.animateProgress();
+                
+                // 로딩 메시지 변경
+                this.rotateLoadingMessages();
+            }
+
+            async animateProgress() {
+                const progressFill = document.getElementById('progressFill');
+                const duration = 12000; // 12초
+                const steps = 100;
+                const stepDuration = duration / steps;
+                
+                for (let i = 0; i <= steps; i++) {
+                    progressFill.style.width = `${i}%`;
+                    await new Promise(resolve => setTimeout(resolve, stepDuration));
+                }
+            }
+
+            rotateLoadingMessages() {
+                const loadingTextElement = document.querySelector('.loading-text');
+                let messageIndex = 0;
+                
+                const interval = setInterval(() => {
+                    messageIndex = (messageIndex + 1) % this.loadingMessages.length;
+                    loadingTextElement.textContent = this.loadingMessages[messageIndex];
+                }, 2400); // 2.4초마다 메시지 변경
+                
+                // 12초 후 정리
+                setTimeout(() => {
+                    clearInterval(interval);
+                }, 12000);
+            }
+
+            async simulateLoading() {
+                return new Promise(resolve => {
+                    setTimeout(resolve, 12000); // 12초 대기
+                });
+            }
+
+            hideLoading() {
+                const overlay = document.getElementById('loadingOverlay');
+                overlay.style.display = 'none';
+            }
+
+            showAnswer(question, answer) {
+                // 편지지 숨기기
+                const wishPaper = document.getElementById('wishPaper');
+                wishPaper.style.display = 'none';
+                
+                // 답변 영역 표시
+                const answerSection = document.getElementById('answerSection');
+                const answerContent = document.getElementById('answerContent');
+                
+                answerContent.innerHTML = this.formatAnswer(answer);
+                answerSection.style.display = 'block';
+                
+                // 스크롤을 답변 영역으로
+                setTimeout(() => {
+                    answerSection.scrollIntoView({ behavior: 'smooth' });
+                }, 100);
+            }
+
+            formatAnswer(answer) {
+                // 답변을 구조화된 레이아웃으로 포맷팅
+                let formattedAnswer = answer;
+                
+                // 인사말 감지 및 스타일링
+                formattedAnswer = formattedAnswer.replace(
+                    /(안녕하세요![^\.]*\.)/g, 
+                    '<div class="greeting">$1</div>'
+                );
+                
+                // 섹션 제목 감지 및 스타일링 (**제목:** 형태)
+                formattedAnswer = formattedAnswer.replace(
+                    /\*\*([^*]+):\*\*/g,
+                    '<div class="section-title"><i class="fas fa-star section-icon"></i>$1</div>'
+                );
+                
+                // 리스트 항목 감지 및 구조화 (• 시작하는 항목들)
+                formattedAnswer = formattedAnswer.replace(
+                    /((?:^|\n)(?:•[^\n]+(?:\n|$))+)/gm,
+                    (match) => {
+                        const items = match.trim().split('\n').filter(line => line.trim().startsWith('•'));
+                        const itemsHtml = items.map(item => {
+                            const text = item.replace('•', '').trim();
+                            return `<div class="point-item">
+                                <i class="fas fa-check-circle point-icon"></i>
+                                <span class="point-text">${text}</span>
+                            </div>`;
+                        }).join('');
+                        return `<div class="point-list">${itemsHtml}</div>`;
+                    }
+                );
+                
+                // 강조 텍스트 처리
+                formattedAnswer = formattedAnswer.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+                formattedAnswer = formattedAnswer.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+                
+                // 질문 인용 하이라이트
+                formattedAnswer = formattedAnswer.replace(
+                    /"([^"]+)"/g,
+                    '<div class="highlight-box">"$1"</div>'
+                );
+                
+                // 마무리 인사 감지
+                formattedAnswer = formattedAnswer.replace(
+                    /(더 구체적인[^!]*!.*?[✨😊]+)/g,
+                    '<div class="closing">$1</div>'
+                );
+                
+                // 기본 줄바꿈 처리 (이미 div로 처리되지 않은 부분만)
+                formattedAnswer = formattedAnswer.replace(/\n/g, '<br>');
+                
+                // 연속된 br 태그를 paragraph로 변환
+                formattedAnswer = formattedAnswer.replace(/<br>\s*<br>/g, '</p><p>');
+                
+                // 전체를 paragraph로 감싸기 (이미 div가 아닌 경우만)
+                if (!formattedAnswer.includes('<div')) {
+                    formattedAnswer = `<p>${formattedAnswer}</p>`;
+                }
+                
+                return formattedAnswer;
+            }
+
+            getFallbackAnswer(question) {
+                const genderText = this.chatbotGender === 'female' ? '여성' : '남성';
+                
+                return `안녕하세요! ${genderText} ISTP 상담사입니다. 🌟
+
+귀하의 질문을 받았습니다: "${question}"
+
+ISTP는 논리적이고 실용적인 성격으로, 다음과 같은 특징을 가지고 있습니다:
+
+**주요 특성:**
+• 뛰어난 문제 해결 능력
+• 독립적이고 자유로운 성향  
+• 현실적이고 실용적인 접근
+• 손재주가 좋고 기술적 능력 우수
+
+**${genderText} ISTP의 특별한 점:**
+${this.chatbotGender === 'female' 
+    ? '• 독립성과 섬세함의 완벽한 조화\n• 창의적이면서도 논리적인 사고\n• 강인하면서도 따뜻한 리더십' 
+    : '• 차분한 판단력과 실행력\n• 기술적 전문성과 리더십\n• 실용적이면서도 혁신적인 사고'
+}
+
+더 구체적인 상담을 원하신다면 언제든 새로운 질문을 해주세요! 😊✨`;
+            }
+
+            newWish() {
+                // 답변 영역 숨기고 편지지 다시 표시
+                document.getElementById('answerSection').style.display = 'none';
+                document.getElementById('wishPaper').style.display = 'block';
+                document.getElementById('questionInput').value = '';
+                
+                // 편지지로 스크롤
+                document.getElementById('wishPaper').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // 전역 함수들
+        function sendWish(event) {
+            wishService.sendWish(event);
+        }
+
+        function newWish() {
+            wishService.newWish();
+        }
+
+        function goBack() {
+            if (confirm('정말로 이전 페이지로 돌아가시겠습니까?')) {
+                window.location.href = 'gender-selection.html';
+            }
+        }
+
+        // 인스턴스 생성
+        let wishService;
+        document.addEventListener('DOMContentLoaded', () => {
+            wishService = new ISTPWishService();
+        });
+
+        // 터치 디바이스 최적화
+        document.addEventListener('touchstart', function() {}, {passive: true});
+    </script>
+</body>
+</html>

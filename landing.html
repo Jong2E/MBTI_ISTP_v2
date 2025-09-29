@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ISTP 상담 - 논리적 실용주의자와 만나보세요</title>
+    <meta name="description" content="ISTP 유형 전문 상담사와 성격, 직업, 연애 스타일까지 맞춤 상담을 받아보세요">
+    
+    <!-- 폰트 및 아이콘 -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            /* 따뜻한 베이지 컬러 팔레트 */
+            --primary-warm: #D4A574;
+            --secondary-warm: #E6C2A6;
+            --accent-gold: #DAA520;
+            --accent-bronze: #CD7F32;
+            --text-dark: #5D4037;
+            --text-medium: #8D6E63;
+            --text-light: #BCAAA4;
+            --bg-gradient-start: #FFF8E1;
+            --bg-gradient-end: #F3E5AB;
+            --card-bg: rgba(255, 248, 225, 0.95);
+            --shadow-light: 0 4px 12px rgba(139, 69, 19, 0.15);
+            --shadow-heavy: 0 8px 24px rgba(139, 69, 19, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            min-height: 100vh;
+            color: var(--text-dark);
+            overflow-x: hidden;
+        }
+
+        /* 메인 컨테이너 */
+        .main-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* 상단 헤더 */
+        .header {
+            position: relative;
+            z-index: 10;
+            padding: 20px;
+            text-align: center;
+        }
+
+
+
+        .page-title {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 16px 24px;
+            box-shadow: var(--shadow-light);
+            display: inline-block;
+        }
+
+        .page-title h1 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .title-emoji {
+            font-size: 24px;
+        }
+
+        /* 캐릭터 섹션 */
+        .character-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        .character-container {
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .character-avatar {
+            width: 180px;
+            height: 180px;
+            background: linear-gradient(135deg, var(--primary-warm), var(--secondary-warm));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-heavy);
+            position: relative;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .character-avatar i {
+            font-size: 80px;
+            color: white;
+        }
+
+        .character-badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: var(--accent-gold);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: var(--shadow-light);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* 대화 박스 */
+        .dialogue-box {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: var(--shadow-heavy);
+            position: relative;
+            max-width: 400px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .dialogue-box::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 16px;
+            height: 16px;
+            background: var(--card-bg);
+            border-radius: 3px;
+            rotate: 45deg;
+        }
+
+        .dialogue-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .dialogue-avatar {
+            width: 32px;
+            height: 32px;
+            background: var(--primary-warm);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+        }
+
+        .dialogue-name {
+            font-weight: 600;
+            color: var(--text-dark);
+            font-size: 16px;
+        }
+
+        .dialogue-text {
+            line-height: 1.6;
+            color: var(--text-medium);
+            font-size: 15px;
+            margin-bottom: 20px;
+        }
+
+        .dialogue-highlight {
+            background: linear-gradient(120deg, var(--accent-gold), var(--accent-bronze));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 600;
+        }
+
+        /* MBTI 배지들 */
+        .mbti-badges {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 20px 0;
+        }
+
+        .mbti-letter {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: white;
+            font-size: 16px;
+            box-shadow: var(--shadow-light);
+        }
+
+        .mbti-i { background: #2C3E50; }
+        .mbti-s { background: #27AE60; }
+        .mbti-t { background: #8E44AD; }
+        .mbti-p { background: #E67E22; }
+
+        /* 액션 버튼 */
+        .action-section {
+            padding: 20px;
+        }
+
+        .start-button {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary-warm), var(--secondary-warm));
+            color: white;
+            border: none;
+            border-radius: 16px;
+            padding: 18px 24px;
+            font-size: 18px;
+            font-weight: 600;
+            box-shadow: var(--shadow-heavy);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .start-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(74, 144, 226, 0.3);
+        }
+
+        .start-button:active {
+            transform: translateY(0);
+        }
+
+        .button-icon {
+            font-size: 20px;
+        }
+
+        /* 기능 미리보기 */
+        .features-preview {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            padding: 0 20px;
+        }
+
+        .feature-item {
+            text-align: center;
+            flex: 1;
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 8px;
+            color: var(--primary-warm);
+            font-size: 20px;
+            box-shadow: var(--shadow-light);
+        }
+
+        .feature-text {
+            font-size: 12px;
+            color: var(--text-medium);
+            font-weight: 500;
+        }
+
+        /* 반응형 디자인 */
+        @media (max-width: 480px) {
+            .header { padding: 16px; }
+            .character-avatar { width: 160px; height: 160px; }
+            .character-avatar i { font-size: 70px; }
+            .dialogue-box { padding: 20px; margin: 0 16px; }
+            .action-section { padding: 16px; }
+            .start-button { padding: 16px 20px; font-size: 16px; }
+        }
+
+        @media (min-width: 768px) {
+            .main-container {
+                max-width: 500px;
+                margin: 0 auto;
+                box-shadow: var(--shadow-heavy);
+            }
+            
+            .character-avatar { width: 200px; height: 200px; }
+            .character-avatar i { font-size: 90px; }
+            .dialogue-box { max-width: 450px; }
+        }
+
+        @media (min-width: 1024px) {
+            .main-container {
+                max-width: 600px;
+            }
+        }
+
+        /* 로딩 애니메이션 */
+        .fade-in {
+            animation: fadeIn 0.8s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- 상단 헤더 -->
+        <div class="header">
+
+            <div class="page-title fade-in">
+                <h1>
+                    ISTP 전문 상담사
+                </h1>
+            </div>
+        </div>
+
+        <!-- 캐릭터 및 대화 섹션 -->
+        <div class="character-section">
+            <div class="character-container fade-in">
+                <div class="character-avatar">
+                    <i class="fas fa-user-tie"></i>
+                    <div class="character-badge">
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dialogue-box fade-in">
+                <div class="dialogue-header">
+                    <div class="dialogue-avatar">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                    <div class="dialogue-name">ISTP 전문가</div>
+                </div>
+                
+                <div class="dialogue-text">
+                    안녕하세요! 저는 <span class="dialogue-highlight">논리적 실용주의자 ISTP</span> 전문 상담사입니다. 
+                    <br><br>
+                    🎯 <strong>ISTP의 성격 특성</strong>부터 <strong>직업 추천</strong>, <strong>연애 스타일</strong>, <strong>성장 방향</strong>까지 
+                    따뜻하고 실용적인 조언을 제공해드려요!
+                    <br><br>
+                    <span class="dialogue-highlight">Ti-Se-Ni-Fe</span> 인지기능을 이해하며 
+                    여러분만의 <strong>개인 맞춤 조언</strong>을 받아보세요.
+                </div>
+
+                <div class="mbti-badges">
+                    <div class="mbti-letter mbti-i">I</div>
+                    <div class="mbti-letter mbti-s">S</div>
+                    <div class="mbti-letter mbti-t">T</div>
+                    <div class="mbti-letter mbti-p">P</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 기능 미리보기 -->
+        <div class="features-preview fade-in">
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <div class="feature-text">성격 이해</div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i class="fas fa-briefcase"></i>
+                </div>
+                <div class="feature-text">직업 추천</div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i class="fas fa-handshake"></i>
+                </div>
+                <div class="feature-text">연애 조언</div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="feature-text">성장 가이드</div>
+            </div>
+        </div>
+
+        <!-- 시작 버튼 -->
+        <div class="action-section">
+            <button class="start-button fade-in" onclick="startChatbot()">
+                <span class="button-icon">💬</span>
+                ISTP 상담사와 대화하기
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // 페이지 로드 애니메이션
+        window.addEventListener('load', () => {
+            document.querySelectorAll('.fade-in').forEach((element, index) => {
+                setTimeout(() => {
+                    element.style.opacity = '1';
+                }, index * 150);
+            });
+        });
+
+        // 게임 시작 함수
+        function startChatbot() {
+            // 게임 시작 - 성별 선택 페이지로 이동
+            let targetPage = 'gender-selection.html';
+            
+            // 부드러운 페이지 전환 효과
+            document.body.style.transition = 'all 0.5s ease';
+            document.body.style.transform = 'scale(0.95)';
+            document.body.style.opacity = '0.8';
+            
+            setTimeout(() => {
+                window.location.href = targetPage;
+            }, 300);
+        }
+
+        // 모바일 터치 개선
+        document.addEventListener('touchstart', function() {}, {passive: true});
+        
+        // 화면 방향 변경 대응
+        window.addEventListener('orientationchange', () => {
+            setTimeout(() => {
+                window.location.reload();
+            }, 100);
+        });
+    </script>
+</body>
+</html>

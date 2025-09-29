@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ISTP 채팅</title>
+    <meta name="description" content="ISTP 전문 AI 챗봇과의 모바일 채팅">
+    
+    <!-- 폰트 -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        .mobile-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: white;
+            max-width: 500px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        /* 성별 선택 모달 */
+        .gender-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .gender-content {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 350px;
+            width: 90%;
+            text-align: center;
+            animation: modalSlideUp 0.3s ease;
+        }
+
+        @keyframes modalSlideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .gender-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .gender-subtitle {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-bottom: 25px;
+        }
+
+        .gender-options {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .gender-option {
+            flex: 1;
+            padding: 20px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .gender-option:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .gender-option.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .gender-icon {
+            font-size: 30px;
+            margin-bottom: 8px;
+        }
+
+        .gender-label {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .gender-confirm {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .gender-confirm:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .gender-confirm:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* 캐릭터 이미지 영역 (상단) */
+        .character-section {
+            height: 300px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .character-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        .character-overlay {
+            position: absolute;
+            bottom: 15px;
+            left: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .character-info {
+            flex: 1;
+        }
+
+        .character-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 2px;
+        }
+
+        .character-type {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+
+        .gender-change-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .gender-change-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* 채팅 영역 (하단) */
+        .chat-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: white;
+        }
+
+        .chat-header {
+            padding: 15px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+        }
+
+        .chat-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        .chat-subtitle {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        /* 메시지 영역 */
+        .messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%);
+        }
+
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            animation: messageSlideIn 0.3s ease;
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .message.user .message-avatar {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+        }
+
+        .message-content {
+            max-width: 80%;
+            background: white;
+            padding: 12px 16px;
+            border-radius: 18px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            line-height: 1.5;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+
+        .message.user .message-content {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .message-time {
+            font-size: 10px;
+            color: #95a5a6;
+            margin-top: 5px;
+            text-align: right;
+        }
+
+        .message.user .message-time {
+            text-align: left;
+            color: rgba(255,255,255,0.8);
+        }
+
+        /* 타이핑 인디케이터 */
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .typing-dots {
+            background: white;
+            padding: 12px 16px;
+            border-radius: 18px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            display: flex;
+            gap: 3px;
+        }
+
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #95a5a6;
+            animation: typingPulse 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        /* 입력 영역 */
+        .input-section {
+            padding: 15px 20px;
+            background: white;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .message-input {
+            flex: 1;
+            min-height: 40px;
+            max-height: 100px;
+            padding: 10px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 20px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: none;
+            outline: none;
+            transition: border-color 0.3s ease;
+            line-height: 1.4;
+        }
+
+        .message-input:focus {
+            border-color: #667eea;
+        }
+
+        .send-button {
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .send-button:hover {
+            transform: scale(1.05);
+        }
+
+        .send-button:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* 로딩 오버레이 */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 20px;
+            z-index: 100;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .loading-text {
+            font-size: 16px;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        .loading-timer {
+            font-size: 24px;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        /* 반응형 디자인 */
+        @media (min-width: 501px) {
+            .mobile-container {
+                max-width: 400px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .character-section {
+                height: 250px;
+            }
+            
+            .character-overlay {
+                bottom: 10px;
+                left: 10px;
+                right: 10px;
+                padding: 10px 12px;
+            }
+            
+            .messages-container {
+                padding: 15px;
+            }
+            
+            .input-section {
+                padding: 12px 15px;
+            }
+        }
+
+        /* 애니메이션 */
+        @keyframes messageSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes typingPulse {
+            0%, 60%, 100% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+            30% {
+                transform: scale(1.2);
+                opacity: 1;
+            }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* 스크롤바 스타일 */
+        .messages-container::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .messages-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .messages-container::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="mobile-container">
+        <!-- 성별 선택 모달 -->
+        <div id="genderModal" class="gender-modal">
+            <div class="gender-content">
+                <div class="gender-title">성별을 선택해주세요</div>
+                <div class="gender-subtitle">더 정확한 ISTP 상담을 위해</div>
+                
+                <div class="gender-options">
+                    <div class="gender-option" data-gender="male">
+                        <div class="gender-icon">👨</div>
+                        <div class="gender-label">남성</div>
+                    </div>
+                    <div class="gender-option" data-gender="female">
+                        <div class="gender-icon">👩</div>
+                        <div class="gender-label">여성</div>
+                    </div>
+                </div>
+                
+                <button id="genderConfirm" class="gender-confirm" disabled>
+                    시작하기
+                </button>
+            </div>
+        </div>
+
+        <!-- 캐릭터 이미지 영역 (상단) -->
+        <div class="character-section">
+            <img id="characterImage" class="character-image" src="" alt="ISTP 캐릭터">
+            <div class="character-overlay">
+                <div class="character-info">
+                    <div class="character-name" id="characterName">ISTP 전문가</div>
+                    <div class="character-type" id="characterType">논리적 실용주의자</div>
+                </div>
+                <button class="gender-change-btn" onclick="showGenderModal()" title="성별 변경">
+                    <i class="fas fa-cog"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- 채팅 영역 (하단) -->
+        <div class="chat-section">
+            <!-- 채팅 헤더 -->
+            <div class="chat-header">
+                <div class="chat-title">🔧 ISTP 챗봇</div>
+                <div class="chat-subtitle">논리적 실용주의자와의 대화</div>
+            </div>
+
+            <!-- 메시지 영역 -->
+            <div class="messages-container" id="messagesContainer">
+                <!-- 환영 메시지 -->
+                <div class="message bot">
+                    <div class="message-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="message-content">
+                        <div id="welcomeMessage">안녕하세요! 👋 저는 ISTP 전문 챗봇입니다.<br>논리적 실용주의자에 대해 궁금한 것이 있으시면 언제든 물어보세요!</div>
+                        <div class="message-time" id="welcomeTime"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 입력 영역 -->
+            <div class="input-section">
+                <div class="input-container">
+                    <textarea 
+                        id="messageInput" 
+                        class="message-input" 
+                        placeholder="ISTP에 대해 궁금한 것을 물어보세요..."
+                        rows="1"
+                    ></textarea>
+                    <button id="sendButton" class="send-button">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 로딩 오버레이 -->
+        <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">답변을 준비하고 있어요...</div>
+            <div class="loading-timer" id="loadingTimer">12</div>
+        </div>
+    </div>
+
+    <script>
+        // 간단한 유틸리티 함수들
+        const Utils = {
+            log: (...args) => console.log('[ISTP Chat]', ...args),
+            error: (...args) => console.error('[ISTP Chat Error]', ...args)
+        };
+
+        class MobileChatbot {
+            constructor() {
+                this.isProcessing = false;
+                this.messages = [];
+                this.userGender = null;
+                
+                this.initElements();
+                this.bindEvents();
+                this.checkGenderSettings();
+            }
+
+            initElements() {
+                this.genderModal = document.getElementById('genderModal');
+                this.genderOptions = document.querySelectorAll('.gender-option');
+                this.genderConfirm = document.getElementById('genderConfirm');
+                this.messagesContainer = document.getElementById('messagesContainer');
+                this.messageInput = document.getElementById('messageInput');
+                this.sendButton = document.getElementById('sendButton');
+                this.loadingOverlay = document.getElementById('loadingOverlay');
+                this.loadingTimer = document.getElementById('loadingTimer');
+                this.characterImage = document.getElementById('characterImage');
+                this.characterName = document.getElementById('characterName');
+                this.characterType = document.getElementById('characterType');
+                this.welcomeMessage = document.getElementById('welcomeMessage');
+                this.welcomeTime = document.getElementById('welcomeTime');
+            }
+
+            bindEvents() {
+                // 성별 선택 이벤트
+                this.genderOptions.forEach(option => {
+                    option.addEventListener('click', () => {
+                        this.selectGender(option.dataset.gender);
+                    });
+                });
+
+                this.genderConfirm.addEventListener('click', () => {
+                    this.confirmGender();
+                });
+
+                // 채팅 이벤트
+                this.sendButton.addEventListener('click', () => this.sendMessage());
+                this.messageInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        this.sendMessage();
+                    }
+                });
+                this.messageInput.addEventListener('input', () => this.autoResize());
+            }
+
+            checkGenderSettings() {
+                const savedGender = localStorage.getItem('istp_chatbot_gender');
+                if (savedGender) {
+                    this.userGender = savedGender;
+                    this.hideGenderModal();
+                    this.setupCharacter();
+                } else {
+                    this.showGenderModal();
+                }
+            }
+
+            selectGender(gender) {
+                this.genderOptions.forEach(opt => opt.classList.remove('selected'));
+                document.querySelector(`[data-gender="${gender}"]`).classList.add('selected');
+                this.userGender = gender;
+                this.genderConfirm.disabled = false;
+            }
+
+            confirmGender() {
+                if (!this.userGender) return;
+                
+                localStorage.setItem('istp_chatbot_gender', this.userGender);
+                localStorage.setItem('istp_chatbot_setup_completed', 'true');
+                
+                this.hideGenderModal();
+                this.setupCharacter();
+            }
+
+            showGenderModal() {
+                this.genderModal.style.display = 'flex';
+            }
+
+            hideGenderModal() {
+                this.genderModal.style.display = 'none';
+            }
+
+            setupCharacter() {
+                // 성별별 캐릭터 이미지 및 텍스트 설정
+                if (this.userGender === 'male') {
+                    this.characterImage.src = 'https://page.gensparksite.com/v1/base64_upload/836f582fb786c21a95a883266f0d56b6';
+                    this.characterName.textContent = '남성 ISTP 전문가';
+                    this.characterType.textContent = '논리적 실용주의자 형님';
+                    this.welcomeMessage.innerHTML = '안녕하세요! 👋 저는 남성 ISTP 전문 챗봇입니다.<br>논리적 실용주의자 형님의 특성에 대해 궁금한 것이 있으시면 언제든 물어보세요!';
+                } else if (this.userGender === 'female') {
+                    this.characterImage.src = 'https://page.gensparksite.com/v1/base64_upload/ca3a4555ca40a6658cf93707aa767438';
+                    this.characterName.textContent = '여성 ISTP 전문가';
+                    this.characterType.textContent = '논리적 실용주의자 언니';
+                    this.welcomeMessage.innerHTML = '안녕하세요! 👋 저는 여성 ISTP 전문 챗봇입니다.<br>논리적 실용주의자 언니의 특성에 대해 궁금한 것이 있으시면 언제든 물어보세요!';
+                }
+                
+                this.welcomeTime.textContent = new Date().toLocaleTimeString('ko-KR', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            }
+
+            autoResize() {
+                const textarea = this.messageInput;
+                textarea.style.height = 'auto';
+                textarea.style.height = Math.min(textarea.scrollHeight, 100) + 'px';
+            }
+
+            async sendMessage() {
+                const text = this.messageInput.value.trim();
+                if (!text || this.isProcessing) return;
+
+                // 사용자 메시지 추가
+                this.addMessage(text, 'user');
+                this.messageInput.value = '';
+                this.autoResize();
+
+                // 12초 딜레이와 함께 응답 생성
+                await this.processMessageWithDelay(text);
+            }
+
+            addMessage(text, sender) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${sender}`;
+
+                const avatar = document.createElement('div');
+                avatar.className = 'message-avatar';
+                avatar.innerHTML = sender === 'user' ? '<i class="fas fa-user"></i>' : '<i class="fas fa-robot"></i>';
+
+                const content = document.createElement('div');
+                content.className = 'message-content';
+                content.innerHTML = `
+                    <div>${this.formatMessage(text)}</div>
+                    <div class="message-time">${new Date().toLocaleTimeString('ko-KR', {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    })}</div>
+                `;
+
+                messageDiv.appendChild(avatar);
+                messageDiv.appendChild(content);
+                this.messagesContainer.appendChild(messageDiv);
+                
+                this.scrollToBottom();
+            }
+
+            async processMessageWithDelay(userMessage) {
+                this.isProcessing = true;
+                this.sendButton.disabled = true;
+
+                // 타이핑 인디케이터 표시
+                this.showTypingIndicator();
+
+                // 로딩 오버레이 표시 및 12초 타이머
+                this.showLoadingWithTimer();
+
+                try {
+                    // 12초 대기
+                    await this.delay(12000);
+
+                    // 응답 생성
+                    const response = this.generateResponse(userMessage);
+                    
+                    // 타이핑 인디케이터 제거
+                    this.hideTypingIndicator();
+                    
+                    // 응답 메시지 추가
+                    this.addMessage(response, 'bot');
+                    
+                } catch (error) {
+                    Utils.error('응답 생성 실패:', error);
+                    this.hideTypingIndicator();
+                    this.addMessage('죄송합니다. 일시적인 오류가 발생했습니다. 다시 시도해주세요.', 'bot');
+                } finally {
+                    this.hideLoading();
+                    this.isProcessing = false;
+                    this.sendButton.disabled = false;
+                }
+            }
+
+            showTypingIndicator() {
+                const typingDiv = document.createElement('div');
+                typingDiv.className = 'typing-indicator';
+                typingDiv.id = 'typingIndicator';
+                typingDiv.innerHTML = `
+                    <div class="message-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="typing-dots">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                `;
+                this.messagesContainer.appendChild(typingDiv);
+                this.scrollToBottom();
+            }
+
+            hideTypingIndicator() {
+                const typingIndicator = document.getElementById('typingIndicator');
+                if (typingIndicator) {
+                    typingIndicator.remove();
+                }
+            }
+
+            showLoadingWithTimer() {
+                this.loadingOverlay.style.display = 'flex';
+                let timeLeft = 12;
+                this.loadingTimer.textContent = timeLeft;
+
+                const timer = setInterval(() => {
+                    timeLeft--;
+                    this.loadingTimer.textContent = timeLeft;
+                    
+                    if (timeLeft <= 0) {
+                        clearInterval(timer);
+                    }
+                }, 1000);
+            }
+
+            hideLoading() {
+                this.loadingOverlay.style.display = 'none';
+            }
+
+            async delay(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+
+            generateResponse(userMessage) {
+                const message = userMessage.toLowerCase();
+                const genderPrefix = this.userGender === 'male' ? '형님' : this.userGender === 'female' ? '언니' : '당신';
+                
+                if (message.includes('특징') || message.includes('성격')) {
+                    return `🔧 **ISTP의 주요 특징**\n\n${genderPrefix}께서 궁금해하시는 ISTP의 핵심 특성을 알려드릴게요!\n\n• **분석적 사고**: 문제의 본질을 파악하고 논리적으로 해결\n• **실용성 중시**: 이론보다는 실제 적용 가능한 것을 선호\n• **독립성**: 자신만의 방식으로 일하는 것을 좋아함\n• **손재주**: 기계나 도구를 다루는 능력이 뛰어남\n\n${this.userGender === 'male' ? '남성 ISTP는 특히 기술적 리더십에서 뛰어난 면모를 보여요! 💪' : this.userGender === 'female' ? '여성 ISTP는 독립성과 섬세함의 균형이 매력적이에요! 🌸' : 'ISTP만의 독특한 매력이에요! ✨'}`;
+                }
+                
+                if (message.includes('직업') || message.includes('일')) {
+                    return `💼 **${genderPrefix}에게 어울리는 직업**\n\n• 기계 엔지니어, 전기 기술자\n• 소프트웨어 개발자, 시스템 관리자\n• 자동차 정비사, 항공기 정비사\n• 외과의사, 응급의학과 의사\n• 건축가, 조각가\n\n${this.userGender === 'male' ? '남성 ISTP는 기술 관리직이나 창업에도 적합해요!' : this.userGender === 'female' ? '여성 ISTP는 의료나 디자인 분야에서도 뛰어나요!' : ''}\n\n실무 중심이고 독립적으로 일할 수 있는 환경에서 최고의 성과를 발휘합니다! 🚀`;
+                }
+                
+                if (message.includes('연애') || message.includes('사랑')) {
+                    return `💕 **${genderPrefix}의 연애 스타일**\n\n• **행동으로 표현**: 말보다는 실질적인 도움으로 사랑을 보여줌\n• **독립성 존중**: 상대방의 개인 공간과 자유를 중요하게 생각\n• **실용적 배려**: 상대방의 문제를 해결해주려고 노력\n• **솔직한 소통**: 돌려말하기보다 직접적이고 명확한 표현을 선호\n\n${this.userGender === 'male' ? '남성 ISTP는 든든하고 신뢰할 수 있는 파트너예요! 💪' : this.userGender === 'female' ? '여성 ISTP는 독립적이면서도 따뜻한 마음을 가진 파트너예요! 💖' : '조용하지만 진심 어린 사랑을 하는 스타일이에요! 💝'}`;
+                }
+                
+                return `🤔 흥미로운 질문이네요, ${genderPrefix}!\n\nISTP에 대해 더 구체적으로 어떤 부분이 궁금하신가요? \n\n• **성격 특징**과 장단점\n• **적합한 직업**과 커리어\n• **연애 스타일**과 인간관계\n• **성장 방향**과 발전 방법\n\n${this.userGender === 'male' ? '형님만의 ISTP 특성' : this.userGender === 'female' ? '언니만의 ISTP 매력' : 'ISTP'}을 함께 탐구해봐요! ✨`;
+            }
+
+            formatMessage(text) {
+                return text
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\n/g, '<br>');
+            }
+
+            scrollToBottom() {
+                setTimeout(() => {
+                    this.messagesContainer.scrollTop = this.messagesContainer.scrollHeight;
+                }, 100);
+            }
+        }
+
+        // 전역 함수
+        function showGenderModal() {
+            document.getElementById('genderModal').style.display = 'flex';
+        }
+
+        // 페이지 로드 시 챗봇 초기화
+        document.addEventListener('DOMContentLoaded', () => {
+            new MobileChatbot();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔧 ISTP 챗봇 데모</title>
+    <style>
+        body { 
+            margin: 0; 
+            padding: 20px; 
+            font-family: 'Arial', sans-serif; 
+            background: linear-gradient(135deg, #f8f9fa 0%, #ecf0f1 100%);
+            line-height: 1.6;
+        }
+        .demo-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(44, 62, 80, 0.2);
+            overflow: hidden;
+        }
+        .demo-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .demo-header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        .demo-header .subtitle {
+            margin-top: 10px;
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        .mbti-badges {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .mbti-letter {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: white;
+        }
+        .mbti-i { background: #2c3e50; }
+        .mbti-s { background: #27ae60; }
+        .mbti-t { background: #8e44ad; }
+        .mbti-p { background: #e67e22; }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 40px;
+        }
+        .feature-card {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 4px solid #27ae60;
+        }
+        .feature-card h3 {
+            color: #2c3e50;
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .feature-card ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        .feature-card li {
+            margin-bottom: 8px;
+            color: #555;
+        }
+        
+        .tech-stack {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            padding: 30px 40px;
+            text-align: center;
+        }
+        .tech-items {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .tech-item {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .cta-section {
+            background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        .cta-button {
+            display: inline-block;
+            background: #e67e22;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 20px;
+            transition: transform 0.3s ease;
+        }
+        .cta-button:hover {
+            transform: translateY(-2px);
+        }
+        
+        .preview-note {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 40px;
+            text-align: center;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <div class="demo-header">
+            <h1>
+                <span>🔧</span>
+                ISTP 챗봇
+                <span>🤖</span>
+            </h1>
+            <div class="subtitle">논리적 실용주의자와의 전문 AI 대화</div>
+            <div class="mbti-badges">
+                <div class="mbti-letter mbti-i">I</div>
+                <div class="mbti-letter mbti-s">S</div>
+                <div class="mbti-letter mbti-t">T</div>
+                <div class="mbti-letter mbti-p">P</div>
+            </div>
+        </div>
+
+        <div class="preview-note">
+            <strong>🎯 프로젝트 완성!</strong> 아래는 구현된 주요 기능들입니다. 
+            실제 챗봇을 사용하려면 <strong>Publish 탭</strong>에서 배포해주세요!
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <h3>🎨 디자인 & UI</h3>
+                <ul>
+                    <li><strong>ISTP 맞춤 색상</strong> - Ti/Se/Ni/Fe 인지기능 기반</li>
+                    <li><strong>친근한 인터페이스</strong> - 직관적이고 사용하기 쉬운 디자인</li>
+                    <li><strong>완전 반응형</strong> - 모바일, 태블릿, PC 완벽 대응</li>
+                    <li><strong>부드러운 애니메이션</strong> - 자연스러운 사용자 경험</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <h3>🤖 AI 챗봇 시스템</h3>
+                <ul>
+                    <li><strong>Google Gemini API</strong> - 실제 AI 응답 (키 설정시)</li>
+                    <li><strong>지능형 모의응답</strong> - API 없이도 완전한 테스트</li>
+                    <li><strong>실시간 타이핑</strong> - 자연스러운 대화 느낌</li>
+                    <li><strong>질문 분류</strong> - 사용자 의도 파악 및 맞춤 응답</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <h3>📚 ISTP 전문 지식</h3>
+                <ul>
+                    <li><strong>심층 분석 기반</strong> - 제공된 보고서 데이터 활용</li>
+                    <li><strong>7개 주요 카테고리</strong> - 성격/직업/연애/성장/기능</li>
+                    <li><strong>실용적 조언</strong> - 구체적이고 실행 가능한 답변</li>
+                    <li><strong>친근한 설명</strong> - 이해하기 쉬운 전문 정보</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <h3>⚙️ 기술적 특징</h3>
+                <ul>
+                    <li><strong>모듈식 구조</strong> - 확장과 유지보수 용이</li>
+                    <li><strong>안정적 시스템</strong> - 오류 처리 및 폴백</li>
+                    <li><strong>성능 최적화</strong> - 빠른 로딩과 응답</li>
+                    <li><strong>확장 가능</strong> - 다른 MBTI 유형 추가 가능</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="tech-stack">
+            <h2>🚀 기술 스택</h2>
+            <div class="tech-items">
+                <div class="tech-item">HTML5 & CSS3</div>
+                <div class="tech-item">JavaScript ES6+</div>
+                <div class="tech-item">Google Gemini API</div>
+                <div class="tech-item">Font Awesome</div>
+                <div class="tech-item">Google Fonts</div>
+                <div class="tech-item">반응형 디자인</div>
+            </div>
+        </div>
+
+        <div class="cta-section">
+            <h2>🎯 준비 완료!</h2>
+            <p>ISTP 전문 챗봇이 완성되었습니다.<br>
+            이제 <strong>Publish 탭</strong>에서 배포하여 실제 사용자들과 공유해보세요!</p>
+            <div style="margin-top: 25px;">
+                <strong>📋 다음 단계:</strong><br>
+                1️⃣ Publish 탭 클릭 → 2️⃣ Deploy 버튼 → 3️⃣ 라이브 URL 획득
+            </div>
+            <div style="margin-top: 20px; font-size: 0.9rem; opacity: 0.9;">
+                💡 Google Gemini API 키를 설정하면 실제 AI 응답을 사용할 수 있습니다
+            </div>
+        </div>
+    </div>
+</body>
+</html>
